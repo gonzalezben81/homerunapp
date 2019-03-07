@@ -17,11 +17,10 @@ Batting <- read_csv("Batting.csv")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-  tags$head(includeScript("www/google-analytics.js")),
+  # tags$head(includeScript("www/google-analytics.js")),
    # Application title
    titlePanel(" Baseball Player: Home Run Comparison"),
    
-   # Sidebar with a slider input for number of bins 
    sidebarLayout(
       sidebarPanel(
         actionButton(inputId = "go",label = "Create Home Run Graph"),
@@ -37,14 +36,10 @@ ui <- fluidPage(
          #textInput("thirdtwo",label = "Player Three Last Name",value = "Bonds"),
          textInput("fourthone",label = "Player Four",value = "Mark McGwire")
          #textInput("fourthtwo",label = "Player Four Last Name",value = "McGwire")
-        
-        
-        
+
       ),
       
-      
-      
-      # Show a plot of the generated distribution
+
       mainPanel(
         tabsetPanel(
          tabPanel("Home Run Comparison",plotOutput("distPlot",width = "100%", height = "600px")),
@@ -52,30 +47,15 @@ ui <- fluidPage(
          tabPanel("Player Two Stats",dataTableOutput("tabletwo")),
          tabPanel("Player Three Stats",dataTableOutput("table3")),
          tabPanel("Player Four Stats",dataTableOutput("table4"))
-         
+
       ))
    )
 )
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
   
-  
-  # getinfo <- function(firstname, lastname){
-  #   playerline <- subset(Master,
-  #                        nameFirst==firstname & nameLast==lastname)
-  #   name.code <- as.character(playerline$playerID)
-  #   birthyear <- playerline$birthYear
-  #   birthmonth <- playerline$birthMonth
-  #   birthday <- playerline$birthDay
-  #   byear <- ifelse(birthmonth <= 6, birthyear, birthyear + 1)
-  #   list(name.code=name.code, byear=byear)}
-  # 
-  
- 
-  
- 
-   
+
   observeEvent(input$go,{output$distPlot <- renderPlot({
     
     withProgress(message = 'Creating Home Run Comparison Graph',
@@ -87,8 +67,6 @@ server <- function(input, output) {
                  },env = parent.frame(n=1))
      
      getinfo <- function(name){
-       # playerline <- subset(Master,
-       #                      nameFirst==firstname & nameLast==lastname)
        playerline <- subset(Master,NAMES==name)
        name.code <- as.character(playerline$playerID)
        birthyear <- playerline$birthYear
@@ -97,8 +75,7 @@ server <- function(input, output) {
        byear <- ifelse(birthmonth <= 6, birthyear, birthyear + 1)
        list(name.code=name.code, byear=byear)}
      
-     
-     
+
      playerone <- getinfo(input$firstone)
      
      playertwo <- getinfo(input$secondone)
@@ -107,14 +84,6 @@ server <- function(input, output) {
      
      playerfour <- getinfo(input$fourthone)
      
-     # playeroneinfo <- getinfo("Babe", "Ruth")
-     # 
-     # 
-     # 
-     # playertwoinfo <- reactive({getinfo(input$secondone, input$secondtwo)})
-     # playerthreeinfo <- reactive({getinfo(input$thirdone, input$thirdtwo)})
-     # playerfourinfo <- reactive({getinfo(input$fourthone, input$fourthtwo)})
-     # 
      
      playeronedata <- subset(Batting, playerID == playerone$name.code)
      playeronedata$Age <- playeronedata$yearID - playerone$byear
@@ -128,8 +97,7 @@ server <- function(input, output) {
      playerfourdata <- subset(Batting, playerID == playerfour$name.code)
      playerfourdata$Age <- playerfourdata$yearID - playerfour$byear
      
-     
-     
+
      with(playeronedata, plot(Age, cumsum(HR), type="l", lty=3, lwd=2,
                           xlab="Age", ylab="Career Home Runs",
                           xlim=c(18, 45), ylim=c(0, 800),col = "blue"))
@@ -151,7 +119,6 @@ server <- function(input, output) {
                      Sys.sleep(0.25)
                    }
                  },env = parent.frame(n=1))
-    
     
     playerinfo1 <- subset(Master,NAMES == input$firstone)
     
@@ -179,7 +146,6 @@ server <- function(input, output) {
                      Sys.sleep(0.25)
                    }
                  },env = parent.frame(n=1))
-    
     
     playerinfo2 <- subset(Master,NAMES == input$secondone)
     
